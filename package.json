@@ -4,8 +4,8 @@
   "description": "## Project Overview",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm test"
   },
-  "author": "",
+  "author": " rahulrr-coder <rahulrr5002@protonmail.com>",
   "license": "ISC"
 }
