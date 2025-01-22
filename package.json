@@ -1,0 +1,11 @@
+{
+  "name": "parkfails",
+  "version": "1.0.0",
+  "description": "## Project Overview",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "author": " rahulrr-coder <rahulrr5002@protonmail.com>",
+  "license": "ISC"
+}
