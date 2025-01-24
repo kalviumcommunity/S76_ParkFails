@@ -4,12 +4,19 @@
   "description": "## Project Overview",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "node server.js"
   },
   "author": " rahulrr-coder <rahulrr5002@protonmail.com>",
   "license": "ISC",
   "devDependencies": {
     "jest": "^29.7.0",
     "supertest": "^7.0.0"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
