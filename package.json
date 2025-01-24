@@ -4,8 +4,12 @@
   "description": "## Project Overview",
   "main": "index.js",
   "scripts": {
-    "test": "npm test"
+    "test": "jest"
   },
   "author": " rahulrr-coder <rahulrr5002@protonmail.com>",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
+  }
 }
