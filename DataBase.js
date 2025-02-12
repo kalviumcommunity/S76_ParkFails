@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+let dbStatus = "Disconnected";
+
 const connectDatabase = async () => {
   try {
     const connection = await mongoose.connect(process.env.DB_URL);
@@ -12,4 +14,5 @@ const connectDatabase = async () => {
   }
 };
 
-module.exports = connectDatabase;
+module.exports = { connectDatabase, dbStatus };
+

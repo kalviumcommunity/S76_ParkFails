@@ -9,7 +9,7 @@ const connectDatabase = require('./DataBase');
 connectDatabase();
 
 app.get('/',function(req,res){
-    res.send('Backend server is live!')
+    res.send('Database Connection Status: ${dbStatus}')
 })
 
 app.get('/ping',function(req,res){
@@ -23,5 +23,7 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 module.exports = app;  
+
+
 
 
