@@ -1,16 +1,18 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const mongoose = require('mongoose');
 dotenv.config();
 
 const app = express()
 const PORT = process.env.PORT || 3000;
-const connectDatabase = require('./DataBase');
+const Database = require('./DataBase');
 
-connectDatabase();
+Database.connectDatabase();
 
-app.get('/',function(req,res){
-    res.send('Backend server is live!')
-})
+app.get('/', function(req, res) {
+    const connectionStatus = mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected';
+    res.send(`Database Connection Status: ${connectionStatus}`);
+});
 
 app.get('/ping',function(req,res){
     res.send('pong')
@@ -23,5 +25,7 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 module.exports = app;  
+
+
 
 
