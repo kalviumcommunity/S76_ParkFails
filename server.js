@@ -6,6 +6,10 @@ dotenv.config();
 const app = express()
 const PORT = process.env.PORT || 3000;
 const Database = require('./DataBase');
+app.use(express.json());  
+
+const routes = require('./routes')
+app.use('/api', routes);
 
 Database.connectDatabase();
 
