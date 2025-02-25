@@ -19,5 +19,8 @@
 - **Database**: MongoDB
 - **Containerization**: Docker
 
-###Deployed Backend server on Render
+### Deployed Backend server on Render
 https://s76-parkfails.onrender.com/
+
+### Deployed Frontend
+https://parkfails.pages.dev/
