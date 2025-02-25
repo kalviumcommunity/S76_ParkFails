@@ -23,4 +23,4 @@
 https://s76-parkfails.onrender.com/
 
 ### Deployed Frontend
-https://frabjous-alfajores-1f0f53.netlify.app/
+https://parkfails.pages.dev/
