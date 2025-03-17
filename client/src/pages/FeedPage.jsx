@@ -1,90 +1,68 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Post from '../components/Post';
+import { postsService } from '../services/api';
 
 const FeedPage = () => {
-  // Dummy data array for multiple posts
-  const dummyPosts = [
-    {
-      id: 1,
-      username: 'parkingvigilante',
-      userAvatar: '/assets/react.svg',
-      timestamp: '2025-03-12T08:30:00Z',
-      caption: 'Found this beauty taking up TWO spots at the mall today! 🤦‍♂️ #ParkingFail #LearnToPark',
-      imageUrl: '/assets/PF1.jpg',
-      likes: 42,
-      comments: [
-        {
-          id: 101,
-          username: 'carlovers',
-          userAvatar: '/assets/react.svg',
-          text: 'Classic! Some people just don\'t care about others.',
-          timestamp: '2025-03-12T09:15:00Z'
-        },
-        {
-          id: 102,
-          username: 'parkingqueen',
-          userAvatar: '/assets/react.svg',
-          text: 'I saw something similar yesterday. Left them a nice note! 😂',
-          timestamp: '2025-03-12T10:22:00Z'
-        }
-      ],
-      currentUserAvatar: '/assets/react.svg'
-    },
-    {
-      id: 2,
-      username: 'badparkingcop',
-      userAvatar: '/assets/react.svg',
-      timestamp: '2025-03-11T15:45:00Z',
-      caption: 'This person thought the sidewalk was a valid parking spot 🤔 #SidewalkParking #ParkFails',
-      imageUrl: '/assets/PF2.jpg',
-      likes: 87,
-      comments: [
-        {
-          id: 201,
-          username: 'walkingfan',
-          userAvatar: '/assets/react.svg',
-          text: 'As a pedestrian, this infuriates me!',
-          timestamp: '2025-03-11T16:02:00Z'
-        }
-      ],
-      currentUserAvatar: '/assets/react.svg'
-    },
-    {
-      id: 3,
-      username: 'parking_disaster',
-      userAvatar: '/assets/react.svg',
-      timestamp: '2025-03-10T12:20:00Z',
-      caption: 'Someone needs to go back to driving school... 😅 #DiagonalParking #HowNotToPark',
-      imageUrl: '/assets/PF3.jpg',
-      likes: 135,
-      comments: [
-        {
-          id: 301,
-          username: 'drivingteacher',
-          userAvatar: '/assets/react.svg',
-          text: 'I would fail this student immediately!',
-          timestamp: '2025-03-10T13:15:00Z'
-        },
-        {
-          id: 302,
-          username: 'geometryexpert',
-          userAvatar: '/assets/react.svg',
-          text: "That's an interesting angle they chose there...",
-          timestamp: '2025-03-10T14:30:00Z'
-        }
-      ],
-      currentUserAvatar: '/assets/react.svg'
-    }
-  ];
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+        const data = await postsService.getAllPosts();
+        setPosts(data);
+        setError(null);
+      } catch (err) {
+        setError('Failed to load posts. Please try again later.');
+        console.error('Error fetching posts:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-2xl">
+        <div className="text-center">
+          <div className="spinner-border text-blue-600" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>
+          <p className="mt-2">Loading posts...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-2xl">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <strong className="font-bold">Error!</strong>
+          <span className="block sm:inline"> {error}</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
       <h1 className="text-3xl font-bold text-center mb-8 text-blue-600">ParkFails Feed</h1>
-      <div className="space-y-6">
-        {dummyPosts.map(post => (
-          <Post key={post.id} post={post} />
-        ))}
-      </div>
+      {posts.length === 0 ? (
+        <div className="text-center text-gray-600">
+          <p>No posts found. Be the first to post a parking fail!</p>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {posts.map(post => (
+            <Post key={post._id} post={post} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

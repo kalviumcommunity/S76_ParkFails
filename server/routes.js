@@ -1,85 +1,57 @@
 const express = require('express');
 const router = express.Router();
+const itemController = require('./itemController');
+const postController = require('./postController');
 
-let items = []; // Temporary in-memory storage
 
-// Middleware to validate item ID
-const validateItemId = (req, res, next) => {
-    const id = parseInt(req.params.id);
-    if (isNaN(id)) {
-        return res.status(400).json({ message: 'Invalid item ID. Must be a number.' });
-    }
-    req.itemId = id; // Store the parsed ID for later use
-    next();
-};
+// Middleware for authentication (implement later)
+// const { protect } = require('../middleware/authMiddleware');
 
-// Middleware to validate request body
-const validateItemBody = (req, res, next) => {
-    const { id, name, price } = req.body;
-    if (!id || !name || !price) {
-        return res.status(400).json({ message: 'Missing required fields: id, name, price' });
-    }
-    next();
-};
+// Get all posts
+router.get('/', postController.getAllPosts);
+
+// Get a single post
+router.get('/:id', postController.getPostById);
+
+// Create a post
+router.post('/', postController.createPost);
+
+// Like a post
+router.put('/:id/like', postController.likePost);
+
+// Unlike a post
+router.put('/:id/unlike', postController.unlikePost);
+
+// Add comment to a post
+router.post('/:id/comments', postController.addComment);
 
 // Create (POST)
-router.post('/items', validateItemBody, (req, res) => {
-    try {
-        const item = req.body;
-        if (items.find(i => i.id === item.id)) {
-            return res.status(409).json({ message: 'Item with this ID already exists' });
-        }
-        items.push(item);
-        res.status(201).json({ message: 'Item created', item });
-    } catch (error) {
-        res.status(500).json({ message: 'Internal Server Error', error: error.message });
-    }
-});
+router.post('/items', 
+  itemController.validateItemBody, 
+  itemController.createItem
+);
 
 // Read (GET all)
-router.get('/items', (req, res) => {
-    try {
-        res.json(items);
-    } catch (error) {
-        res.status(500).json({ message: 'Internal Server Error', error: error.message });
-    }
-});
+router.get('/items', 
+  itemController.getAllItems
+);
 
 // Read (GET one)
-router.get('/items/:id', validateItemId, (req, res) => {
-    try {
-        const item = items.find(i => i.id === req.itemId);
-        if (!item) return res.status(404).json({ message: 'Item not found' });
-        res.json(item);
-    } catch (error) {
-        res.status(500).json({ message: 'Internal Server Error', error: error.message });
-    }
-});
+router.get('/items/:id', 
+  itemController.validateItemId, 
+  itemController.getItemById
+);
 
 // Update (PUT)
-router.put('/items/:id', validateItemId, (req, res) => {
-    try {
-        const index = items.findIndex(i => i.id === req.itemId);
-        if (index === -1) return res.status(404).json({ message: 'Item not found' });
-
-        items[index] = { ...items[index], ...req.body };
-        res.json({ message: 'Item updated', item: items[index] });
-    } catch (error) {
-        res.status(500).json({ message: 'Internal Server Error', error: error.message });
-    }
-});
+router.put('/items/:id', 
+  itemController.validateItemId, 
+  itemController.updateItem
+);
 
 // Delete (DELETE)
-router.delete('/items/:id', validateItemId, (req, res) => {
-    try {
-        const index = items.findIndex(i => i.id === req.itemId);
-        if (index === -1) return res.status(404).json({ message: 'Item not found' });
-
-        items.splice(index, 1);
-        res.json({ message: 'Item deleted' });
-    } catch (error) {
-        res.status(500).json({ message: 'Internal Server Error', error: error.message });
-    }
-});
+router.delete('/items/:id', 
+  itemController.validateItemId, 
+  itemController.deleteItem
+);
 
 module.exports = router;
