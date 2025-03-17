@@ -1,57 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const itemController = require('./itemController');
-const postController = require('./postController');
 
+// Import controllers
+const itemController = require('./controller/itemController');
+const postController = require('./controller/postController');
 
-// Middleware for authentication (implement later)
-// const { protect } = require('../middleware/authMiddleware');
+// Item routes
+router.post('/items', itemController.validateItemBody, itemController.createItem);
+router.get('/items', itemController.getAllItems);
+router.get('/items/:id', itemController.validateItemId, itemController.getItemById);
+router.put('/items/:id', itemController.validateItemId, itemController.updateItem);
+router.delete('/items/:id', itemController.validateItemId, itemController.deleteItem);
 
-// Get all posts
-router.get('/', postController.getAllPosts);
-
-// Get a single post
-router.get('/:id', postController.getPostById);
-
-// Create a post
-router.post('/', postController.createPost);
-
-// Like a post
-router.put('/:id/like', postController.likePost);
-
-// Unlike a post
-router.put('/:id/unlike', postController.unlikePost);
-
-// Add comment to a post
-router.post('/:id/comments', postController.addComment);
-
-// Create (POST)
-router.post('/items', 
-  itemController.validateItemBody, 
-  itemController.createItem
-);
-
-// Read (GET all)
-router.get('/items', 
-  itemController.getAllItems
-);
-
-// Read (GET one)
-router.get('/items/:id', 
-  itemController.validateItemId, 
-  itemController.getItemById
-);
-
-// Update (PUT)
-router.put('/items/:id', 
-  itemController.validateItemId, 
-  itemController.updateItem
-);
-
-// Delete (DELETE)
-router.delete('/items/:id', 
-  itemController.validateItemId, 
-  itemController.deleteItem
-);
+// Post routes
+router.get('/posts', postController.getAllPosts);
+router.get('/posts/:id', postController.getPostById);
+router.post('/posts', postController.createPost);
+router.put('/posts/:id/like', postController.likePost);
+router.put('/posts/:id/unlike', postController.unlikePost);
+router.post('/posts/:id/comments', postController.addComment);
 
 module.exports = router;
