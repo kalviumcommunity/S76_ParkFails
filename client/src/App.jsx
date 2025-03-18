@@ -2,7 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import LandingPage from './pages/LandingPage'
 import FeedPage from './pages/FeedPage'
-
+import UploadForm from './pages/UploadForm'
 import './App.css'
 
 function App() {
@@ -22,6 +22,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/feed" element={<FeedPage />} />
+          <Route path="/upload" element={<UploadForm />} />
         </Routes>
       </div>
     </Router>
