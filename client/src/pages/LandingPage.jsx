@@ -4,6 +4,7 @@ import PF2 from '../assets/PF2.jpg';
 import PF3 from '../assets/PF3.jpg';
 import PF4 from '../assets/PF4.jpg';
 import PF5 from '../assets/PF5.jpg';
+import { Link } from 'react-router-dom';
 
 const failImages = [
   { id: 1, image: PF1, user: 'JohnD' },
@@ -14,7 +15,7 @@ const failImages = [
 
 const LandingPage = () => {
   return (
-    <div className="min-h-screen w-full h-full overflow-hidden font-sans">
+    <div className="min-h-screen w-full overflow-x-hidden font-sans">
       
       <section className="bg-yellow-400 min-h-[600px] flex items-center w-full">
         <div className="container mx-auto px-4 w-full flex flex-col md:flex-row items-center justify-between">
@@ -25,9 +26,9 @@ const LandingPage = () => {
             <p className="text-lg md:text-xl text-gray-800">
               Join ParkFails, where users share and react to hilarious parking disasters!
             </p>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg text-lg transition-colors ml-[100px] mt-[50px]" >
+            <Link to="/feed" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg text-lg transition-colors ml-[100px] mt-[50px] inline-block">
               View Fails →
-            </button>
+            </Link>
           </div>
           <div className="md:w-1/2 mt-8 md:mt-0 flex justify-center h-[300px]">
             <img 
@@ -38,7 +39,6 @@ const LandingPage = () => {
           </div>
         </div>  
       </section>
-
 
       <section className="py-16 w-full bg-white">
         <div className="container mx-auto px-4">
@@ -62,7 +62,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-
       <section className="py-16 w-full bg-gray-400">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-black">Recent Fails from Our Community</h2>
@@ -81,13 +80,12 @@ const LandingPage = () => {
             ))}
           </div>
           <div className="text-center mt-12">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-colors">
-              Join the Fun!
-            </button>
+            <Link to="/upload" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-colors inline-block">
+              Upload Your Own Fail!
+            </Link>
           </div>
         </div>
       </section>
-
 
       <footer className="bg-gray-900 text-white py-8 w-full">
         <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
