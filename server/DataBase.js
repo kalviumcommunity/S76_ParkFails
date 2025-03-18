@@ -1,10 +1,24 @@
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+
+// Ensure dotenv is loaded
+dotenv.config();
 
 let dbStatus = "Disconnected";
 
 const connectDatabase = async () => {
   try {
-    const connection = await mongoose.connect(process.env.DB_URL);
+    // Debug output to see what environment variables are available
+    console.log("MongoDB URI:", process.env.DB_URL || process.env.MONGODB_URI || "Not defined");
+    
+    // Try both common environment variable names
+    const connectionString = process.env.DB_URL || process.env.MONGODB_URI;
+    
+    if (!connectionString) {
+      throw new Error("Database connection string not found in environment variables");
+    }
+    
+    const connection = await mongoose.connect(connectionString);
     dbStatus = "Connected";
     console.log(`MongoDB connected with server: ${connection.connection.host}`);
   } catch (err) {
@@ -23,4 +37,3 @@ mongoose.connection.on('disconnected', () => {
 });
 
 module.exports = { connectDatabase, dbStatus };
-

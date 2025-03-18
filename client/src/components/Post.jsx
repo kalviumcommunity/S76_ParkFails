@@ -1,32 +1,50 @@
 import React, { useState } from 'react';
+import { postsService } from '../services/api';
 
 const Post = ({ post }) => {
-  const [likes, setLikes] = useState(post.likes);
-  const [isLiked, setIsLiked] = useState(false);
-  const [comments, setComments] = useState(post.comments);
+  const [likes, setLikes] = useState(post.likes || 0);
+  const [isLiked, setIsLiked] = useState(post.isLikedByCurrentUser || false);
+  const [comments, setComments] = useState(post.comments || []);
   const [newComment, setNewComment] = useState('');
   const [showComments, setShowComments] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleLike = () => {
-    if (isLiked) {
-      setLikes(likes - 1);
-    } else {
-      setLikes(likes + 1);
+  const handleLike = async () => {
+    try {
+      if (isLiked) {
+        await postsService.unlikePost(post._id);
+        setLikes(likes - 1);
+      } else {
+        await postsService.likePost(post._id);
+        setLikes(likes + 1);
+      }
+      setIsLiked(!isLiked);
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      // You might want to show an error message to the user
     }
-    setIsLiked(!isLiked);
   };
 
-  const handleComment = (e) => {
+  const handleComment = async (e) => {
     e.preventDefault();
-    if (newComment.trim()) {
-      const comment = {
-        id: Date.now(),
-        username: 'currentUser',
-        text: newComment,
-        timestamp: new Date().toISOString()
-      };
-      setComments([...comments, comment]);
-      setNewComment('');
+    if (newComment.trim() && !submitting) {
+      try {
+        setSubmitting(true);
+        const commentData = {
+          text: newComment
+        };
+        
+        const response = await postsService.addComment(post._id, commentData);
+        
+        // The response should include the new comment with server-generated ID
+        setComments([...comments, response.comment]);
+        setNewComment('');
+      } catch (error) {
+        console.error('Error adding comment:', error);
+        // You might want to show an error message to the user
+      } finally {
+        setSubmitting(false);
+      }
     }
   };
 
@@ -46,14 +64,14 @@ const Post = ({ post }) => {
         <div className="flex items-center space-x-2">
           <div className="w-10 h-10 rounded-full bg-gray-300 overflow-hidden">
             <img 
-              src={post.userAvatar} 
+              src={post.userAvatar || "/assets/react.svg"} 
               alt="User avatar" 
               className="w-full h-full object-cover"
             />
           </div>
           <div>
             <p className="font-semibold text-gray-800">{post.username}</p>
-            <p className="text-xs text-gray-500">{formatDate(post.timestamp)}</p>
+            <p className="text-xs text-gray-500">{formatDate(post.timestamp || post.createdAt)}</p>
           </div>
         </div>
         <button className="text-gray-500 hover:bg-gray-100 p-2 rounded-full">
@@ -135,19 +153,21 @@ const Post = ({ post }) => {
               placeholder="Write a comment..."
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
+              disabled={submitting}
             />
             <button 
               type="submit"
-              className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm"
+              className={`bg-blue-500 text-white px-3 py-1 rounded-full text-sm ${submitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={submitting}
             >
-              Post
+              {submitting ? 'Posting...' : 'Post'}
             </button>
           </form>
 
           {/* Comments List */}
           <div className="space-y-3 max-h-60 overflow-y-auto">
             {comments.map((comment) => (
-              <div key={comment.id} className="flex gap-2">
+              <div key={comment._id || comment.id} className="flex gap-2">
                 <div className="w-8 h-8 rounded-full bg-gray-300 overflow-hidden">
                   <img 
                     src={comment.userAvatar || "/assets/react.svg"} 
@@ -161,7 +181,7 @@ const Post = ({ post }) => {
                     <p className="text-sm">{comment.text}</p>
                   </div>
                   <div className="text-xs text-gray-500 mt-1 ml-2">
-                    {formatDate(comment.timestamp)}
+                    {formatDate(comment.timestamp || comment.createdAt)}
                   </div>
                 </div>
               </div>
