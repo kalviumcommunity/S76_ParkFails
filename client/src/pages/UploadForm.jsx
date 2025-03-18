@@ -1,16 +1,14 @@
 // client/src/pages/UploadForm.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createParkingFail } from '../services/parkingFailService';
+import { createPost } from '../services/api';
 
 const UploadForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    location: '',
-    imageUrl: '',
-    submittedBy: ''
+    username: '',
+    caption: '',
+    imageUrl: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -32,20 +30,18 @@ const UploadForm = () => {
 
     try {
       // Simple validation
-      if (!formData.title || !formData.description || !formData.location || !formData.imageUrl) {
+      if (!formData.username || !formData.caption || !formData.imageUrl) {
         throw new Error('Please fill all required fields');
       }
 
       // Submit the form data to our API
-      await createParkingFail(formData);
+      await createPost(formData);
       
       // Clear the form on success
       setFormData({
-        title: '',
-        description: '',
-        location: '',
-        imageUrl: '',
-        submittedBy: ''
+        username: '',
+        caption: '',
+        imageUrl: ''
       });
       
       // Show success message
@@ -80,7 +76,7 @@ const UploadForm = () => {
               Successfully Uploaded!
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              Your parking fail has been submitted. Thank you for contributing!
+              Your post has been submitted. Thank you for contributing!
             </p>
             <div className="mt-6 space-y-2">
               <button
@@ -123,49 +119,33 @@ const UploadForm = () => {
             <form onSubmit={handleSubmit} className="mt-8 space-y-6">
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-                    Title *
+                  <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                    Your Name *
                   </label>
                   <input
                     type="text"
-                    id="title"
-                    name="title"
-                    value={formData.title}
+                    id="username"
+                    name="username"
+                    value={formData.username}
                     onChange={handleChange}
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    placeholder="e.g., 'SUV Parked Across Two Spaces'"
+                    placeholder="Your name or username"
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                    Description *
+                  <label htmlFor="caption" className="block text-sm font-medium text-gray-700">
+                    Caption *
                   </label>
                   <textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
+                    id="caption"
+                    name="caption"
+                    value={formData.caption}
                     onChange={handleChange}
                     rows={3}
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     placeholder="Describe what happened..."
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="location" className="block text-sm font-medium text-gray-700">
-                    Location *
-                  </label>
-                  <input
-                    type="text"
-                    id="location"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    placeholder="e.g., 'Mall of America, Minneapolis, MN'"
                     required
                   />
                 </div>
@@ -187,22 +167,6 @@ const UploadForm = () => {
                   <p className="mt-1 text-xs text-gray-500">
                     Please upload your image to an image hosting service and paste the URL here.
                   </p>
-                </div>
-
-                <div>
-                  <label htmlFor="submittedBy" className="block text-sm font-medium text-gray-700">
-                    Your Name *
-                  </label>
-                  <input
-                    type="text"
-                    id="submittedBy"
-                    name="submittedBy"
-                    value={formData.submittedBy}
-                    onChange={handleChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    placeholder="Your name or username"
-                    required
-                  />
                 </div>
               </div>
 

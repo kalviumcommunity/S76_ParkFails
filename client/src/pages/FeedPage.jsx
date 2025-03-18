@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Post from '../components/Post';
 import { postsService } from '../services/api';
+import { Link } from 'react-router-dom';
 
 const FeedPage = () => {
   const [posts, setPosts] = useState([]);
@@ -50,7 +51,7 @@ const FeedPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
+    <div className="container mx-auto px-4 py-8 relative">
       <h1 className="text-3xl font-bold text-center mb-8 text-blue-600">ParkFails Feed</h1>
       {posts.length === 0 ? (
         <div className="text-center text-gray-600">
@@ -63,6 +64,15 @@ const FeedPage = () => {
           ))}
         </div>
       )}
+      <Link
+        to="/upload"
+        className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg transition duration-300"
+        aria-label="Upload new parking fail"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+      </Link>
     </div>
   );
 };
