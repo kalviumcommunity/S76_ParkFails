@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { postsService } from '../services/api';
+import { Link } from 'react-router-dom';
 
 const Post = ({ post }) => {
   const [likes, setLikes] = useState(post.likes || 0);
@@ -189,6 +190,25 @@ const Post = ({ post }) => {
           </div>
         </div>
       )}
+
+      <div className="p-4">
+        <h2 className="text-xl font-bold mb-2">{post.title}</h2>
+        <p className="text-gray-700 mb-3">{post.description}</p>
+        
+        <div className="flex justify-between items-center mt-4">
+          <span className="text-sm text-gray-600">
+            Posted by {post.username || "Anonymous"}
+          </span>
+          
+          {/* Add Edit Button Here */}
+          <Link 
+            to={`/update/${post._id}`} 
+            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors"
+          >
+            Edit
+          </Link>
+        </div>
+      </div>
     </div>
   );
 };
