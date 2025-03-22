@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import LandingPage from './pages/LandingPage'
 import FeedPage from './pages/FeedPage'
 import UploadForm from './pages/UploadForm'
+import UpdatePage from './pages/UpdatePage';
 import './App.css'
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/feed" element={<FeedPage />} />
           <Route path="/upload" element={<UploadForm />} />
+          <Route path="/update/:id" element={<UpdatePage />} />
         </Routes>
       </div>
     </Router>
