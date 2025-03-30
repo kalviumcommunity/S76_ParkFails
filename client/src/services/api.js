@@ -47,6 +47,28 @@ export const postsService = {
     }
   },
   
+  // Update an existing post
+  updatePost: async (postId, updateData) => {
+    try {
+      const response = await api.put(`/posts/${postId}`, updateData);
+      return response.data; // This will return the { message, post } object from the server
+    } catch (error) {
+      console.error(`Error updating post ${postId}:`, error);
+      throw error;
+    }
+  },
+  
+  // Delete a post
+  deletePost: async (postId) => {
+    try {
+      const response = await api.delete(`/posts/${postId}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error deleting post ${postId}:`, error);
+      throw error;
+    }
+  },
+  
   // Like a post
   likePost: async (postId) => {
     try {
@@ -102,6 +124,28 @@ export const getAllPosts = async () => {
     return response.data;
   } catch (error) {
     console.error('Error fetching posts:', error);
+    throw error;
+  }
+};
+
+// Add update post function
+export const updatePost = async (postId, updateData) => {
+  try {
+    const response = await axios.put(`${API_URL}/posts/${postId}`, updateData);
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating post ${postId}:`, error);
+    throw error;
+  }
+};
+
+// Add delete post function
+export const deletePost = async (postId) => {
+  try {
+    const response = await axios.delete(`${API_URL}/posts/${postId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting post ${postId}:`, error);
     throw error;
   }
 };

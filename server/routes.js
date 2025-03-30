@@ -16,6 +16,8 @@ router.delete('/items/:id', itemController.validateItemId, itemController.delete
 router.get('/posts', postController.getAllPosts);
 router.get('/posts/:id', postController.getPostById);
 router.post('/posts', postController.createPost);
+router.put('/posts/:id', postController.updatePost);  // New route for updating posts
+router.delete('/posts/:id', postController.deletePost);  // New route for deleting posts
 router.put('/posts/:id/like', postController.likePost);
 router.put('/posts/:id/unlike', postController.unlikePost);
 router.post('/posts/:id/comments', postController.addComment);

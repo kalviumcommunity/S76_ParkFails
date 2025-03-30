@@ -26,6 +26,16 @@ const FeedPage = () => {
     fetchPosts();
   }, []);
 
+  const handleDeletePost = (postId) => {
+    setPosts(posts.filter(post => post._id !== postId));
+  };
+
+  const handleUpdatePost = (postId, updatedPost) => {
+    setPosts(posts.map(post => 
+      post._id === postId ? { ...post, ...updatedPost } : post
+    ));
+  };
+
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-2xl">
@@ -60,7 +70,12 @@ const FeedPage = () => {
       ) : (
         <div className="space-y-6">
           {posts.map(post => (
-            <Post key={post._id} post={post} />
+            <Post 
+              key={post._id} 
+              post={post} 
+              onDeletePost={handleDeletePost}
+              onUpdatePost={handleUpdatePost}
+            />
           ))}
         </div>
       )}
