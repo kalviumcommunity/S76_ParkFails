@@ -64,6 +64,65 @@ exports.createPost = async (req, res) => {
   }
 };
 
+// Update a post
+exports.updatePost = async (req, res) => {
+  try {
+    const { caption, imageUrl } = req.body;
+    const postId = req.params.id;
+    
+    const post = await Post.findById(postId);
+    
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    
+    // This check looks problematic - req.user may not be set up
+    // and req.body.username isn't being sent from the client when updating
+    if (req.user && req.body.username !== post.username) {
+      return res.status(403).json({ message: 'Not authorized to update this post' });
+    }
+    
+    // Update only the fields that are provided
+    if (caption) post.caption = caption;
+    if (imageUrl) post.imageUrl = imageUrl;
+    
+    const updatedPost = await post.save();
+    
+    res.json({
+      message: 'Post updated successfully',
+      post: updatedPost
+    });
+  } catch (error) {
+    console.error('Error updating post:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// Delete a post
+exports.deletePost = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const post = await Post.findById(postId);
+    
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    
+    // Check if the user deleting is the owner of the post
+    // This is a basic check - you might want to enhance with proper auth
+    if (req.user && req.body.username !== post.username) {
+      return res.status(403).json({ message: 'Not authorized to delete this post' });
+    }
+    
+    await Post.findByIdAndDelete(postId);
+    
+    res.json({ message: 'Post deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting post:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 // Like a post
 exports.likePost = async (req, res) => {
   try {

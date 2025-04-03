@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { postsService } from '../services/api';
 
-const Post = ({ post }) => {
+const Post = ({ post, onDeletePost, onUpdatePost }) => {
   const [likes, setLikes] = useState(post.likes || 0);
   const [isLiked, setIsLiked] = useState(post.isLikedByCurrentUser || false);
   const [comments, setComments] = useState(post.comments || []);
   const [newComment, setNewComment] = useState('');
   const [showComments, setShowComments] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedCaption, setEditedCaption] = useState(post.caption);
+  const [showOptions, setShowOptions] = useState(false);
 
   const handleLike = async () => {
     try {
@@ -48,6 +51,47 @@ const Post = ({ post }) => {
     }
   };
 
+  const handleUpdate = async () => {
+    try {
+      setSubmitting(true);
+      const updatedData = {
+        caption: editedCaption
+      };
+      
+      // Using the postsService consistently
+      const response = await postsService.updatePost(post._id, updatedData);
+      
+      // Call the parent component's update handler with the correct data
+      if (onUpdatePost) {
+        // The server returns { message: 'Post updated successfully', post: updatedPost }
+        onUpdatePost(post._id, response.post);
+      }
+      
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating post:', error);
+      // You might want to show an error message to the user
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this post?')) {
+      try {
+        await postsService.deletePost(post._id);
+        
+        // Call the parent component's delete handler to remove the post from the feed
+        if (onDeletePost) {
+          onDeletePost(post._id);
+        }
+      } catch (error) {
+        console.error('Error deleting post:', error);
+        // You might want to show an error message to the user
+      }
+    }
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { 
@@ -55,6 +99,10 @@ const Post = ({ post }) => {
       month: 'short', 
       day: 'numeric' 
     });
+  };
+
+  const toggleOptions = () => {
+    setShowOptions(!showOptions);
   };
 
   return (
@@ -74,18 +122,75 @@ const Post = ({ post }) => {
             <p className="text-xs text-gray-500">{formatDate(post.timestamp || post.createdAt)}</p>
           </div>
         </div>
-        <button className="text-gray-500 hover:bg-gray-100 p-2 rounded-full">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="1"></circle>
-            <circle cx="19" cy="12" r="1"></circle>
-            <circle cx="5" cy="12" r="1"></circle>
-          </svg>
-        </button>
+        <div className="relative">
+          <button 
+            className="text-gray-500 hover:bg-gray-100 p-2 rounded-full"
+            onClick={toggleOptions}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="1"></circle>
+              <circle cx="19" cy="12" r="1"></circle>
+              <circle cx="5" cy="12" r="1"></circle>
+            </svg>
+          </button>
+          
+          {/* Options Dropdown */}
+          {showOptions && (
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+              <div className="py-1">
+                <button 
+                  onClick={() => {
+                    setIsEditing(true);
+                    setShowOptions(false);
+                  }}
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Edit Post
+                </button>
+                <button 
+                  onClick={handleDelete}
+                  className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                >
+                  Delete Post
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Post Content */}
       <div className="px-4 pb-2">
-        <p className="text-gray-800 mb-2">{post.caption}</p>
+        {isEditing ? (
+          <div className="space-y-2">
+            <textarea
+              className="w-full border border-gray-300 rounded-md p-2 text-gray-800"
+              value={editedCaption}
+              onChange={(e) => setEditedCaption(e.target.value)}
+              rows={3}
+            />
+            <div className="flex justify-end space-x-2">
+              <button 
+                className="px-3 py-1 bg-gray-200 rounded-md text-gray-700"
+                onClick={() => {
+                  setIsEditing(false);
+                  setEditedCaption(post.caption);
+                }}
+              >
+                Cancel
+              </button>
+              <button 
+                className="px-3 py-1 bg-blue-500 text-white rounded-md disabled:opacity-50"
+                onClick={handleUpdate}
+                disabled={submitting}
+              >
+                {submitting ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <p className="text-gray-800 mb-2">{post.caption}</p>
+        )}
       </div>
 
       {/* Post Image */}
