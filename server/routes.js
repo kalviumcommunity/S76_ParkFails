@@ -15,11 +15,11 @@ router.delete('/items/:id', itemController.validateItemId, itemController.delete
 // Post routes
 router.get('/posts', postController.getAllPosts);
 router.get('/posts/:id', postController.getPostById);
-router.post('/posts', postController.createPost);
-router.put('/posts/:id', postController.updatePost);  // New route for updating posts
-router.delete('/posts/:id', postController.deletePost);  // New route for deleting posts
+router.post('/posts', postController.validatePostBody, postController.createPost);
+router.put('/posts/:id', postController.updatePost);
+router.delete('/posts/:id', postController.deletePost);
 router.put('/posts/:id/like', postController.likePost);
 router.put('/posts/:id/unlike', postController.unlikePost);
-router.post('/posts/:id/comments', postController.addComment);
+router.post('/posts/:id/comments', postController.validateCommentBody, postController.addComment);
 
 module.exports = router;

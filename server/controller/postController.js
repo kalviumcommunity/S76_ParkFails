@@ -1,5 +1,54 @@
 const Post = require('../model/schema');
 
+// Validation middleware
+const validatePostBody = (req, res, next) => {
+  const { username, caption, imageUrl } = req.body;
+  
+  // Check if required fields exist
+  if (!username || !caption || !imageUrl) {
+    return res.status(400).json({ message: 'Missing required fields: username, caption, imageUrl' });
+  }
+  
+  // Validate username
+  if (typeof username !== 'string' || username.trim().length === 0 || username.length > 50) {
+    return res.status(400).json({ message: 'Username must be a non-empty string with maximum 50 characters' });
+  }
+  
+  // Validate caption
+  if (typeof caption !== 'string' || caption.trim().length === 0) {
+    return res.status(400).json({ message: 'Caption must be a non-empty string' });
+  }
+  
+  // Validate imageUrl format (basic URL validation)
+  const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w.-]*)*\/?$/;
+  if (typeof imageUrl !== 'string' || !urlPattern.test(imageUrl)) {
+    return res.status(400).json({ message: 'Image URL must be a valid URL string' });
+  }
+  
+  next();
+};
+
+const validateCommentBody = (req, res, next) => {
+  const { username, text } = req.body;
+  
+  // Check required fields
+  if (!username || !text) {
+    return res.status(400).json({ message: 'Missing required fields: username, text' });
+  }
+  
+  // Validate username
+  if (typeof username !== 'string' || username.trim().length === 0 || username.length > 50) {
+    return res.status(400).json({ message: 'Username must be a non-empty string with maximum 50 characters' });
+  }
+  
+  // Validate comment text
+  if (typeof text !== 'string' || text.trim().length === 0 || text.length > 500) {
+    return res.status(400).json({ message: 'Comment text must be a non-empty string with maximum 500 characters' });
+  }
+  
+  next();
+};
+
 // Get all posts
 exports.getAllPosts = async (req, res) => {
   try {
@@ -216,3 +265,7 @@ exports.addComment = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+// Export validation middlewares
+exports.validatePostBody = validatePostBody;
+exports.validateCommentBody = validateCommentBody;
