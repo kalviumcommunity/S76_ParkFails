@@ -13,9 +13,27 @@ const validateItemId = (req, res, next) => {
 
 const validateItemBody = (req, res, next) => {
   const { id, name, price } = req.body;
+  
+  // Check if required fields exist
   if (!id || !name || !price) {
     return res.status(400).json({ message: 'Missing required fields: id, name, price' });
   }
+  
+  // Validate ID is a number
+  if (typeof id !== 'number') {
+    return res.status(400).json({ message: 'ID must be a number' });
+  }
+  
+  // Validate name is a string with appropriate length
+  if (typeof name !== 'string' || name.trim().length === 0 || name.length > 100) {
+    return res.status(400).json({ message: 'Name must be a non-empty string with maximum 100 characters' });
+  }
+  
+  // Validate price is a positive number
+  if (typeof price !== 'number' || price <= 0) {
+    return res.status(400).json({ message: 'Price must be a positive number' });
+  }
+  
   next();
 };
 
